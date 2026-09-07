@@ -9,6 +9,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 2.0f;
 
     [Tooltip("Sprint speed of the character in m/s")]
+
+    [SerializeField] private float aimingSpeed = 1.0f;
+
+    [Tooltip("Move speed while aiming")]
     [SerializeField] private float sprintSpeed = 5.335f;
 
     [Tooltip("How fast the character turns to face movement direction")]
@@ -94,7 +98,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        float targetSpeed = _sprint ? sprintSpeed : moveSpeed;
+        PlayerAim aim = GetComponent<PlayerAim>();
+
+        bool isAiming = aim != null && aim.isAiming;
+
+        float targetSpeed = isAiming ? aimingSpeed : (_sprint ? sprintSpeed : moveSpeed);
 
         if (_moveDirection == Vector2.zero) targetSpeed = 0.0f;
 
