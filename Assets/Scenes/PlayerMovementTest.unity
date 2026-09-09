@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 127990572}
   - component: {fileID: 127990571}
   - component: {fileID: 127990570}
-  - component: {fileID: 127990569}
   - component: {fileID: 127990575}
   m_Layer: 0
   m_Name: Shotgun
@@ -141,19 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &127990569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 127990568}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99439a48c45a9e44dbc9ffec3af10517, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  weaponHolder: {fileID: 535785375}
 --- !u!135 &127990570
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -276,11 +262,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 127990568}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed56c27a572b8f8409633ac7b6dfb351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shotgun
+  weaponHolder: {fileID: 535785375}
   muzzle: {fileID: 1111258013}
   projectilePrefab: {fileID: 8729765347162997929, guid: a8686916421af08428ac3e86f656ce0b, type: 3}
   pellets: 5
@@ -302,6 +289,7 @@ GameObject:
   - component: {fileID: 145093638}
   - component: {fileID: 145093637}
   - component: {fileID: 145093643}
+  - component: {fileID: 145093644}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -326,18 +314,7 @@ MonoBehaviour:
   sprintSpeed: 25
   rotationSmoothTime: 0.12
   speedChangeRate: 10
-  jumpHeight: 1.2
-  gravity: -15
-  jumpTimeout: 0.5
-  fallTimeout: 0.15
-  grounded: 1
-  groundedOffset: -0.14
-  groundedRadius: 0.28
-  groundLayers:
-    serializedVersion: 2
-    m_Bits: 1
   moveAction: {fileID: 685565331}
-  jumpAction: {fileID: 1288854485}
   sprintAction: {fileID: 256226936}
 --- !u!143 &145093638
 CharacterController:
@@ -477,6 +454,34 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   isAiming: 0
+--- !u!114 &145093644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 145093636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7aa1f1795402234da7f298b4fde81de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLoot
+  pickupAction: {fileID: 220123168}
+  pickupRange: 3
+--- !u!114 &220123168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
+  m_Name: Player/Interact
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
+  m_Asset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_ActionId: 852140f2-7766-474d-8707-702459ba45f3
 --- !u!114 &256226936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -679,20 +684,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 127990574}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1288854485
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Player/Jump
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
-  m_Asset: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_ActionId: f1ba0d36-48eb-4cd5-b651-1c94a6531f70
 --- !u!1 &1407335491
 GameObject:
   m_ObjectHideFlags: 0

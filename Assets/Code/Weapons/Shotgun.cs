@@ -1,41 +1,49 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
-public class Shotgun : MonoBehaviour
+
+public class Shotgun : Loot
 {
-    public Transform muzzle;
-    public GameObject projectilePrefab;
-    public int pellets = 6;
-    public float spread = 8f;
-    public float projectileSpeed = 20f;
+    [Header("References")]
+    [SerializeField] private Transform weaponHolder;
+    [SerializeField] private Transform muzzle;
+    [SerializeField] private GameObject projectilePrefab;
 
-    public float fireRate = 0.8f;
+    [Header("Settings")]
+    [SerializeField] private int pellets = 6;
+    [SerializeField] private float spread = 8f;
+    [SerializeField] private float projectileSpeed = 20f;
+    [SerializeField] private float fireRate = 0.8f;
 
+    private bool _pickedUp;
     private float nextFireTime;
 
-    void Start()
+    private void Update()
     {
-
-    }
-
-    void Update()
-    {
-        if (Mouse.current != null &&
-            Mouse.current.leftButton.wasPressedThisFrame &&
-            IsPlayerAiming())
-        {
+        if (_pickedUp && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && IsPlayerAiming())
             Shoot();
-        }
     }
 
-    bool IsPlayerAiming()
+    public override void Pickup()
+    {
+        if (_pickedUp)
+            return;
+
+        _pickedUp = true;
+
+        transform.SetParent(weaponHolder);
+        transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+
+        Debug.Log("Groovy");
+    }
+
+    private bool IsPlayerAiming()
     {
         PlayerAim aim = GetComponentInParent<PlayerAim>();
 
         return aim != null && aim.isAiming;
     }
 
-    void Shoot()
+    private void Shoot()
     {
         Debug.Log("Shoot");
 
