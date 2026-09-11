@@ -16,6 +16,16 @@ public class PlayerLoot : MonoBehaviour
         if (closestLoot != null && pickupAction.action.WasPressedThisFrame())
         {
             closestLoot.Pickup();
+
+            if (closestLoot is Weapon weapon)
+            {
+                PlayerFire playerFire = GetComponent<PlayerFire>();
+
+                if (playerFire != null)
+                {
+                    playerFire.SetWeapon(weapon);
+                }
+            }
         }
 
     }
@@ -27,6 +37,9 @@ public class PlayerLoot : MonoBehaviour
 
         foreach (Loot loot in LootRegistry.Loots)
         {
+            if (loot.transform.IsChildOf(transform))
+                continue;
+
             float distance = Mathf.Sqrt((loot.transform.position - transform.position).sqrMagnitude);
 
             if (distance < closestDistance)
