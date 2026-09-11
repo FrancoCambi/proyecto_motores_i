@@ -59,8 +59,4 @@ public class Projectile : MonoBehaviour
         Debug.Log("Projectil choco con; " +  collision.gameObject.name);
         Destroy(gameObject);
     }
-    void Update()
-    {
-        
-    }
 }
