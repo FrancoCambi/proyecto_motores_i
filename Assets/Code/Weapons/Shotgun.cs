@@ -1,7 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-
-public class Shotgun : Loot
+public class Shotgun : Weapon
 {
     [Header("References")]
     [SerializeField] private Transform weaponHolder;
@@ -14,15 +12,18 @@ public class Shotgun : Loot
     [SerializeField] private float projectileSpeed = 20f;
     [SerializeField] private float fireRate = 0.8f;
 
+    [Header("Ammo")]
+    [SerializeField] private int magazineCapacity = 8;
+    [SerializeField] private int currentAmmo = 8;
+    [SerializeField] private float reloadStartDelay = 0.5f;
+    [SerializeField] private float reloadInterval = 0.5f;
+    public override int CurrentAmmo => currentAmmo;
+
+    private bool _isReloading;
+    private Coroutine _reloadCoroutine;
+
     private bool _pickedUp;
     private float nextFireTime;
-
-    private void Update()
-    {
-        if (_pickedUp && Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && IsPlayerAiming())
-            Shoot();
-    }
-
     public override void Pickup()
     {
         if (_pickedUp)
@@ -36,21 +37,31 @@ public class Shotgun : Loot
         Debug.Log("Groovy");
     }
 
-    private bool IsPlayerAiming()
+    public override void Shoot()
     {
-        PlayerAim aim = GetComponentInParent<PlayerAim>();
+        if (_isReloading)
+        {
+            StopCoroutine(_reloadCoroutine);
+            _reloadCoroutine = null;
+            _isReloading = false;
 
-        return aim != null && aim.isAiming;
-    }
-
-    private void Shoot()
-    {
-        Debug.Log("Shoot");
+            Debug.Log("Reload interrupted");
+        }
 
         if (Time.time < nextFireTime)
             return; 
+
+        if (currentAmmo <= 0)
+        {
+            Debug.Log("No ammo in magazine");
+            return;
+        }
         
         nextFireTime = Time.time + fireRate;
+
+        currentAmmo--;
+
+        Debug.Log("Shoot - Ammo left: " + currentAmmo);
 
         for (int i = 0; i < pellets; i++)
         {
@@ -78,4 +89,52 @@ public class Shotgun : Loot
             rb.linearVelocity = rotation * Vector3.forward * projectileSpeed;
         }
     }
+
+    public override void Reload()
+    {
+        if (_isReloading)
+            return;
+
+        if (currentAmmo >= magazineCapacity)
+            return;
+
+        AmmoInventory ammoInventory = GetComponentInParent<AmmoInventory>();
+
+        if (ammoInventory == null)
+        {
+            Debug.LogError("AmmoInventory not found in Player");
+            return;
+        }
+
+        if (!ammoInventory.HasAmmo())
+        {
+            Debug.Log("No more ammo on reserve");
+            return;
+        }
+
+        _reloadCoroutine = StartCoroutine(ReloadOneByOne(ammoInventory));
+    }
+
+    private System.Collections.IEnumerator ReloadOneByOne(AmmoInventory ammoInventory)
+    {
+        _isReloading = true;
+
+        yield return new WaitForSeconds(reloadStartDelay);
+
+        while (currentAmmo < magazineCapacity && ammoInventory.HasAmmo())
+        {
+            currentAmmo++;
+            ammoInventory.TryUseAmmo();
+
+            Debug.Log("Reloading... " + currentAmmo + "/" + magazineCapacity);
+
+            yield return new WaitForSeconds(reloadInterval);
+        }
+
+        _isReloading = false;
+        _reloadCoroutine = null;
+
+        Debug.Log("Reload complete");
+    }
+
 }
