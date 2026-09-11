@@ -2,32 +2,64 @@ using UnityEngine;
 
 public class Door : Interactable
 {
+    [Header("Door Settings")]
+    [SerializeField] private bool requiresKey = true;
+    [SerializeField] private float openAngle = 90f;
+    [SerializeField] private float openSpeed = 3f;
+
     [Header("Required Item")]
     [SerializeField] private KeyData requiredKey;
 
-    public override void Interact()
+    private bool _isOpen;
+    private Quaternion _closedRotation;
+    private Quaternion _openRotation;
+
+    private void Start()
     {
-        Inventory inventory = FindFirstObjectByType<Inventory>();
+        _closedRotation = transform.rotation;
 
-        if (inventory == null)
-        {
-            Debug.LogWarning("No se encontró un Inventory en la escena.");
-            return;
-        }
-
-        if (!inventory.HasItem(requiredKey))
-        {
-            Debug.Log("Necesitas una llave para abrir esta puerta.");
-            return;
-        }
-
-        Open();
+        _openRotation = _closedRotation * Quaternion.Euler(0f, openAngle, 0f);
     }
 
-    private void Open()
+    private void Update()
     {
-        Debug.Log("Puerta abierta");
+        Quaternion targetRotation = _isOpen ? _openRotation : _closedRotation;
 
-        gameObject.SetActive(false);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            openSpeed * Time.deltaTime
+        );
+    }
+
+    public override void Interact()
+    {
+        if (requiresKey)
+        {
+            Inventory inventory = FindFirstObjectByType<Inventory>();
+
+            if (inventory == null)
+            {
+                Debug.LogWarning("No se encontró un Inventory en la escena.");
+                return;
+            }
+
+            if (!inventory.HasItem(requiredKey))
+            {
+                Debug.Log("Necesitas una llave para abrir esta puerta.");
+                return;
+            }
+        }
+
+        _isOpen = !_isOpen;
+
+        if (_isOpen)
+        {
+            Debug.Log("Puerta abierta");
+        }
+        else
+        {
+            Debug.Log("Puerta cerrada");
+        }
     }
 }
